@@ -51,7 +51,7 @@ class WordsDataset(Dataset):
             datum = []
             for j in range(5):
                 img_path = os.path.join(tmp_path, '%d.png'%j)
-                img = torch.from_numpy(skimage.io.imread(img_path, as_grey=True).flatten()).float()
+                img = torch.from_numpy(skimage.io.imread(img_path, as_gray=True).flatten()).float()
                 img.div_(255)
                 datum.append(img)
             self.observations.append(torch.stack(datum))

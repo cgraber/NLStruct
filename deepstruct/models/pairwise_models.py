@@ -350,7 +350,7 @@ class BasePairwiseModel(object):
             y_updates.append(new_y)
             train_results = self.get_MAP_assignment(train_data, self.mp_graphs, beliefs, batch_size, mp_eps)
             train_task_losses.append(task_loss(train_data, train_results))
-            print "TRAIN TASK LOSSES: ",train_task_losses[-1]
+            print("TRAIN TASK LOSSES: ",train_task_losses[-1])
             if test_data is not None:
                 test_results = self.test(test_data, params, test_masks_path)
                 test_task_losses.append((epoch, task_loss(test_data, test_results)))
@@ -613,7 +613,7 @@ class PairwiseModel(BasePairwiseModel):
                 entropy += mp_graph.get_entropy()
 
         obj = Variable(modelconf.tensor_mod.FloatTensor(1).fill_(entropy*mp_eps))
-        obj += torch.nn.ReLU()(pots*beliefs - pots*batch.data_masks[0]).sum()
+        obj += torch.nn.ReLU()((pots*beliefs - pots*batch.data_masks[0]).sum(dim=1)).sum()
         if normalize:
             obj /= len(batch)
         if self.use_regularization:

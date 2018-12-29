@@ -106,11 +106,18 @@ class Graph(object):
     def get_data_mask(self, datum):
         data_mask = torch.zeros(self.num_potentials)
         for region_ind, region in enumerate(self.regions):
-            if type(region) == tuple:
-                r1, r2 = region
-                assignment = (datum[self.internal2region[r1]].item(), datum[self.internal2region[r2]].item())
-            else:
-                assignment = datum[self.internal2region[region]].item()
+            try:
+                if type(region) == tuple:
+                    r1, r2 = region
+                    assignment = (datum[self.internal2region[r1]].item(), datum[self.internal2region[r2]].item())
+                else:
+                    assignment = datum[self.internal2region[region]].item()
+            except:
+                if type(region) == tuple:
+                    r1, r2 = region
+                    assignment = (datum[self.internal2region[r1]], datum[self.internal2region[r2]])
+                else:
+                    assignment = datum[self.internal2region[region]]
             potential_ind = self.potential_ind_dict[region][assignment]
             data_mask[potential_ind] += 1
         return data_mask

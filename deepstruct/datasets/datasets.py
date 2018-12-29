@@ -5,7 +5,6 @@ import torch
 import torch.cuda
 from deepstruct.models import modelconf
 from torch.utils.data import Dataset
-from deepstruct.datasets import data_utils
 import sys
 import random
 
