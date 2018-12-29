@@ -7,10 +7,12 @@ Welcome!
 This code was developed using the following versions of the following libraries. I cannot guarantee that it will work with other versions:
 - Python 3.5.2
 - numpy 1.15.2
-- PyTorch 0.3.1
+- PyTorch 0.4.0
 - torchvision 0.2.0
 - Matplotlib 2.2.2 (though you can just comment these parts out if necessary)
 - Pillow 5.1.0 (for experiments requiring images)
+- scikit-image
+- dill
 
 Additionally, running this code requires compiling a python extension written in C++ - this will require Python dev libraries as well as a C++ compiler. To compile this extension, enter the 'deepstruct/fastmp' directory and execute:
 `python setup.py build`
