@@ -16,6 +16,7 @@ import time
 
 from deepstruct.models import *
 from deepstruct.datasets import *
+import deepstruct.models.modelconf
 
 np.random.seed(1)
 torch.manual_seed(1)
@@ -114,7 +115,8 @@ class FlickrTaggingDataset(BaseDataset):
                     vals.add(int(line.strip())-1)
                 self.annotations[order[annotation_file]] = vals
             self.img_folder = images_folder
-            self.img_files = [img_file for img_file in os.listdir(images_folder) if os.path.isfile(os.path.join(images_folder, img_file))]
+            self.img_files = [img_file for img_file in os.listdir(images_folder) if os.path.isfile(os.path.join(images_folder, img_file)) and 'jpg' in img_file]
+            print("NUM IMG FILES: ",len(self.img_files))
             self.img_files.sort(key=lambda name: int(name[2:name.find('.jpg')]))
 
             if mode == TRAIN:
@@ -168,16 +170,16 @@ class FlickrPotentialModel(BasePotentialModel):
             self.unary_model.classifier = nn.Sequential(*tmp)
         if len(pair_regions) > 0:
             #V2:
-            self.pair_model = torch.nn.Parameter(config.tensor_mod.FloatTensor(len(pair_regions)*num_vals*num_vals).uniform_(-0.1, 0.1))
+            self.pair_model = torch.nn.Parameter(modelconf.tensor_mod.FloatTensor(len(pair_regions)*num_vals*num_vals).uniform_(-0.1, 0.1))
             #V3:
-            #self.pair_model = torch.nn.Parameter(config.tensor_mod.FloatTensor(len(pair_regions)*num_vals*num_vals).fill_(1.0))
+            #self.pair_model = torch.nn.Parameter(modelconf.tensor_mod.FloatTensor(len(pair_regions)*num_vals*num_vals).fill_(1.0))
 
     def set_observations(self, observations):
         self.num_observations = len(observations)
-        self.observations = Variable(torch.stack(observations)).float()
+        self.observations = Variable(observations).float()
 
     def forward(self):
-        result = Variable(config.tensor_mod.FloatTensor(self.num_observations, self.num_potentials))
+        result = Variable(modelconf.tensor_mod.FloatTensor(self.num_observations, self.num_potentials))
         if len(self.node_regions) > 0:
             result[:, :len(self.node_regions)*self.num_vals] = self.unary_model(self.observations)
         if len(self.pair_regions) > 0:
@@ -190,7 +192,7 @@ def save_features(model, dataset, batch_size, features_path):
     dataloader = DataLoader(dataset, batch_size=batch_size, pin_memory=True, collate_fn=collate_batch)
     results = []
     for batch in dataloader:
-        imgs = Variable(torch.stack(batch.observations)).float()
+        imgs = Variable(batch.observations).float()
         results.append(unary_model(imgs).data.cpu())
     results = torch.cat(results)
     torch.save(results, features_path)
@@ -227,8 +229,11 @@ if __name__ == '__main__':
     parser.add_argument('--verbose', action='store_true')
     parser.add_argument('--val_interval', type=int, default = 10)
     parser.add_argument('--use_loss_aug', action='store_true')
+    parser.add_argument('--gpu', action='store_true')
     args = parser.parse_args()
-    config.use_gpu()
+
+    if args.gpu:
+        modelconf.use_gpu()
 
     def scaled_hamming_diff(true_val, other_val):
         return abs(true_val - other_val)

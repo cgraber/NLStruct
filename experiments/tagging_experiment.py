@@ -98,7 +98,8 @@ class FlickrTaggingDataset(BaseDataset):
                     vals.add(int(line.strip())-1)
                 self.annotations[order[annotation_file]] = vals
             self.img_folder = images_folder
-            self.img_files = [img_file for img_file in os.listdir(images_folder) if os.path.isfile(os.path.join(images_folder, img_file))]
+            self.img_files = [img_file for img_file in os.listdir(images_folder) if os.path.isfile(os.path.join(images_folder, img_file)) and 'jpg' in img_file]
+            print("NUM IMAGES: ",len(self.img_files))
             self.img_files.sort(key=lambda name: int(name[2:name.find('.jpg')]))
 
             if mode == TRAIN:
@@ -170,7 +171,8 @@ class FlickrTaggingDataset_Features(BaseDataset):
                     vals.add(int(line.strip())-1)
                 self.annotations[order[annotation_file]] = vals
             self.img_folder = images_folder
-            self.img_files = [img_file for img_file in os.listdir(images_folder) if os.path.isfile(os.path.join(images_folder, img_file))]
+            self.img_files = [img_file for img_file in os.listdir(images_folder) if os.path.isfile(os.path.join(images_folder, img_file)) and 'jpg' in img_file]
+            print("NUM IMG FILES: ",len(self.img_files))
             self.img_files.sort(key=lambda name: int(name[2:name.find('.jpg')]))
 
             if mode == TRAIN:
@@ -270,7 +272,7 @@ class FlickrBaselineModel(BasePotentialModel):
                 pots[:,1] = tmp.view(-1, 1)*0.5
             else:
                 #pots[:,0] = tmp.view(-1, 1)*-1/10.0
-                pots[:,0] = tmp.view(-1, 1)*-1
+                pots[:,0] = tmp.view(-1)*-1
                 #pots[:,1] = tmp.view(-1, 1)/100.0
             result[:, :len(self.node_regions)*self.num_vals] = pots.view(self.num_observations, -1)
         if len(self.pair_regions) > 0:

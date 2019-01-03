@@ -111,8 +111,9 @@ class FlickrTaggingDataset(Dataset):
                     vals.add(int(line.strip())-1)
                 self.annotations[order[annotation_file]] = vals
             self.img_folder = images_folder
-            self.img_files = [img_file for img_file in os.listdir(images_folder) if os.path.isfile(os.path.join(images_folder, img_file))]
+            self.img_files = [img_file for img_file in os.listdir(images_folder) if os.path.isfile(os.path.join(images_folder, img_file)) and 'jpg' in img_file]
             self.img_files.sort(key=lambda name: int(name[2:name.find('.jpg')]))
+            print("NUM FILES FOUND: ",len(self.img_files))
 
             if mode == TRAIN:
                 self.img_files = self.img_files[:NUM_TRAIN]
