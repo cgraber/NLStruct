@@ -1,5 +1,5 @@
 # NLStruct
-Code used to produce experimental results for the paper "Deep Structured Prediction with Nonlinear Output Activations"
+Code used to produce experimental results for the paper ["Deep Structured Prediction with Nonlinear Output Activations"](https://arxiv.org/abs/1811.00539)
 
 Welcome! 
 
